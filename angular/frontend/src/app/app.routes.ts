@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import {AppLoginComponent} from "./modules/app-security/app-login/app-login.component";
 import {canActivate} from "./modules/app-security/classes/app-security-guard";
+import {AppLogoutComponent} from "./modules/app-security/app-logout/app-logout.component";
 
 export const routes: Routes = [
   {
@@ -23,5 +24,9 @@ export const routes: Routes = [
   {
     path: 'login',
     component: AppLoginComponent,
+  },
+  {
+    path: 'logout',
+    component: AppLogoutComponent,
   }
 ];

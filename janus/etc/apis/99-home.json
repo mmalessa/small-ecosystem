@@ -1,0 +1,21 @@
+{
+  "name": "home",
+  "active": true,
+  "proxy": {
+    "preserve_host": false,
+    "listen_path": "/",
+    "upstreams": {
+      "balancing": "roundrobin",
+      "targets": [
+        {
+          "target": "http://angular:4200"
+        }
+      ]
+    },
+    "strip_path": true,
+    "append_path": true,
+    "methods": [
+      "OPTIONS", "GET", "POST"
+    ]
+  }
+}
