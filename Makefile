@@ -26,6 +26,10 @@ down:
 
 
 ### DEV
+.PHONY: angular-init
+angular-init:
+	$(DC) exec -it angular bash -c "cd frontend && npm install"
+
 .PHONY: angular-console
 angular-console:
 	$(DC) exec -it angular bash

@@ -17,5 +17,18 @@
         "methods": [
             "OPTIONS", "GET", "POST"
         ]
-    }
+    },
+    "plugins": [
+        {
+            "name": "cors",
+            "enabled": true,
+            "config": {
+                "domains": ["*"],
+                "methods": ["GET", "POST", "OPTIONS"],
+                "request_headers": ["*"],
+                "exposed_headers": ["*"],
+                "options_passthrough": false
+            }
+        }
+    ]
 }
