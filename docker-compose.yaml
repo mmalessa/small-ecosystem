@@ -1,0 +1,91 @@
+version: '3.9'
+services:
+
+  janus:
+    container_name: ${COMPOSE_PROJECT_NAME}_janus
+    build:
+      context: janus
+    restart: on-failure
+    ports:
+      - "80:8080"
+      - "81:8081"
+    tty: true
+#    depends_on:
+#      - service1
+#      - service2
+#      - auth-service
+    volumes:
+      - ./janus/etc:/etc/janus
+    command: /app/janus start
+    networks:
+      - net
+
+  dummy_service:
+    container_name: ${COMPOSE_PROJECT_NAME}_dummy_service
+    image: mmalessa/go-dummy-http:1.0.1
+    restart: on-failure
+    environment:
+      - APP_INSTANCE=dummy
+    ports:
+      - 8081:80
+    networks:
+      - net
+
+  postgres:
+    image: postgres:alpine
+    container_name: ${COMPOSE_PROJECT_NAME}_postgres
+    restart: on-failure
+    environment:
+      - POSTGRES_USER=demo
+      - POSTGRES_PASSWORD=demo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - 5432:5432
+    networks:
+      - net
+
+  golauth:
+    image: golauth/golauth
+    container_name: ${COMPOSE_PROJECT_NAME}_golauth
+    restart: on-failure
+    depends_on:
+      - postgres
+    ports:
+      - 8180:8080
+    environment:
+      - PORT=8080
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=golauth
+      - DB_USERNAME=demo
+      - DB_PASSWORD=demo
+    networks:
+      - net
+
+  angular:
+    container_name: ${COMPOSE_PROJECT_NAME}_angular
+    build:
+      context: angular
+      args:
+        - APP_USER_ID
+        - APP_GROUP_ID
+    restart: on-failure
+    user: ${APP_USER_ID}:${APP_GROUP_ID}
+    volumes:
+      - ./angular:/app
+    tty: true
+    ports:
+      - 4200:4200
+    networks:
+      - net
+
+
+networks:
+  net:
+    name: small_ecosystem
+
+volumes:
+  pgdata:
+    name: ${COMPOSE_PROJECT_NAME}_golauth_db
