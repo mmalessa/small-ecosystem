@@ -1,0 +1,29 @@
+<div class="text-center">
+@if (isloggedin) {
+  <button
+    class="btn btn-primary my-1"
+    (click)="bttLogoutClicked()"
+  >LogOut</button>
+
+} @else {
+  <input
+    type="text"
+    class="form-control my-1"
+    id="username"
+    placeholder="Username"
+    [(ngModel)]="username"
+  >
+  <input
+    type="password"
+    class="form-control my-1"
+    id="password"
+    placeholder="Password"
+    [(ngModel)]="password"
+  >
+  <button
+    class="btn btn-primary my-1"
+    (click)="bttLoginClicked()"
+  >LogIn</button>
+  <div class="text-danger">{{errorMsg}}</div>
+}
+</div>
