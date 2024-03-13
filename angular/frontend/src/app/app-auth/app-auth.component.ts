@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {AuthService} from "../services/auth-service";
-import {JwtTokenInfo} from "../app.interfaces";
+import {JwtTokenInfo} from "../classes/jwt-token-info.interface";
 
 @Component({
   selector: 'app-auth',

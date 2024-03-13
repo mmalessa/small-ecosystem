@@ -1,0 +1,10 @@
+<select
+  [(ngModel)]="url"
+>
+  <option value="dummy/something">dummy/something</option>
+</select>
+<button
+  class="btn btn-primary my-1"
+  (click)="onButtonGetClicked()"
+  >Get</button>
+<pre>{{response}}</pre>
