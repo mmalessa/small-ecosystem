@@ -1,5 +1,6 @@
 <div class="text-center">
 @if (isloggedin) {
+  <div class="text-info-emphasis m-2">{{whoAmI}}</div>
   <button
     class="btn btn-primary my-1"
     (click)="bttLogoutClicked()"

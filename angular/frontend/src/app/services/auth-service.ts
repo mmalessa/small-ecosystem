@@ -2,22 +2,58 @@ import {Injectable} from "@angular/core";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {environment} from "../../environments/environment";
+import {JwtTokenInfo} from "../app.interfaces";
 
 @Injectable()
 export class AuthService {
   private tokenKey: string = 'security-token';
+  private tokenInfoEmpty: JwtTokenInfo = {
+    authorities: [],
+    username: '',
+    firstName: '',
+    lastName: '',
+    exp: 0
+  }
+  private tokenInfo: JwtTokenInfo = this.tokenInfoEmpty;
 
   constructor(
     private httpClient: HttpClient
   ) {
-    // localStorage.setItem(this.tokenKey, '');
+    this.initTokenInfo();
   }
 
   public getToken(): string {
     return localStorage.getItem(this.tokenKey) ?? '';
   }
-  public setToken(token: string): void {
+
+  public getTokenInfo(): JwtTokenInfo {
+    return this.tokenInfo;
+  }
+
+  public setToken(token: any): void {
+    if (token == undefined) {
+      this.resetToken();
+      console.error("setToken - token is undefined!");
+      return;
+    }
+
     localStorage.setItem(this.tokenKey, token);
+    this.initTokenInfo();
+  }
+
+  private resetToken(): void {
+    localStorage.removeItem(this.tokenKey);
+    this.initTokenInfo();
+  }
+
+  private initTokenInfo(): void {
+    const token: string = this.getToken();
+    if (token == '') {
+      this.tokenInfo = this.tokenInfoEmpty;
+      return;
+    }
+    const tokenInfoRaw: string[] = token.split('.');
+    this.tokenInfo = JSON.parse(atob(tokenInfoRaw[1]));
   }
 
   public isLoggedIn(): boolean {
@@ -25,9 +61,10 @@ export class AuthService {
   }
 
   public doLogout(): void {
-    localStorage.setItem(this.tokenKey, '');
+    this.resetToken();
   }
-  public doLogin(username: string, password: string): Observable<any> {
+
+  public askForToken(username: string, password: string): Observable<any> {
     return this.httpClient
       .post(
         environment.apiBaseUrl + 'security/auth/token',
@@ -40,5 +77,4 @@ export class AuthService {
         }
       )
   }
-
 }
