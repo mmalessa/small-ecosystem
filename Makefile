@@ -1,40 +1,26 @@
--include .env
+DC = docker compose
+APP = php
 
-D = docker
-DC = docker compose --project-directory=. --file=./docker-compose.yaml
-
-.DEFAULT_GOAL = help
+.DEFAULT_GOAL      = help
 
 .PHONY: help
 help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' Makefile | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
-### PREPARE
 .PHONY: build
 build:
-	@test -f ./.env || (cp ./.env.dist ./.env; echo "\n*** .env was created - Customize it! ***\n"; exit 1)
-	$(DC) build
-
-### RUN
-.PHONY: up
-up:
-	$(DC) up -d
-
-.PHONY: down
-down:
-	$(DC) down
-
+	@BUILD_TARGET=build $(DC) build
 
 ### DEV
-.PHONY: angular-init
-angular-init:
-	$(DC) exec -it angular bash -c "cd frontend && npm install"
+.PHONY: up
+up: ## Start the project docker containers
+	@$(DC) up -d
 
-.PHONY: angular-console
-angular-console:
-	$(DC) exec -it angular bash
+.PHONY: down
+down: ## Down the docker containers
+	@$(DC) down --timeout 25
 
-.PHONY: angular-serve
-angular-serve:
-	$(DC) exec -it angular bash -c "cd frontend && ng serve --host 0.0.0.0"
+.PHONY: shell
+shell:
+	@$(DC) exec -it ${APP} bash
 
