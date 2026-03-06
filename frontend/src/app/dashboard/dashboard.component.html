@@ -1,8 +1,11 @@
 <div class="dashboard-container">
   <h2>Dashboard</h2>
   <div class="actions">
-    <button (click)="pingEcho()" [disabled]="loading">
-      {{ loading ? 'Pinging...' : 'Ping Echo' }}
+    <button (click)="pingEcho()" [disabled]="echoLoading">
+      {{ echoLoading ? 'Pinging...' : 'Ping Echo' }}
+    </button>
+    <button (click)="pingDemo()" [disabled]="demoLoading">
+      {{ demoLoading ? 'Pinging...' : 'Ping Demo' }}
     </button>
     <button (click)="logout()" class="logout-btn">Logout</button>
   </div>
@@ -12,5 +15,12 @@
   @if (echoResponse) {
     <h3>Echo Response</h3>
     <pre>{{ echoResponse | json }}</pre>
+  }
+  @if (demoError) {
+    <div class="error">{{ demoError }}</div>
+  }
+  @if (demoResponse) {
+    <h3>Demo Response</h3>
+    <pre>{{ demoResponse }}</pre>
   }
 </div>

@@ -136,11 +136,16 @@ services:
     volumes:
       - ./echo-service/nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
+  demo-service:
+    image: mmalessa/go-dummy-http:1.0.1
+    container_name: demo-service
+
   krakend:
     image: krakend
     container_name: krakend
     depends_on:
       - echo-service
+      - demo-service
     labels:
       - traefik.enable=true
       - traefik.http.routers.krakend.rule=Host(`api.localhost`)

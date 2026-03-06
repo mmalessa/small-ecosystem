@@ -13,7 +13,11 @@ import { ApiService } from '../api.service';
 export class DashboardComponent {
   echoResponse: any = null;
   echoError: string | null = null;
-  loading = false;
+  echoLoading = false;
+
+  demoResponse: string | null = null;
+  demoError: string | null = null;
+  demoLoading = false;
 
   constructor(
     private authService: AuthService,
@@ -22,16 +26,31 @@ export class DashboardComponent {
   ) {}
 
   pingEcho(): void {
-    this.loading = true;
+    this.echoLoading = true;
     this.echoError = null;
     this.apiService.pingEcho().subscribe({
       next: (res) => {
         this.echoResponse = res;
-        this.loading = false;
+        this.echoLoading = false;
       },
       error: (err) => {
         this.echoError = err.message || 'Request failed';
-        this.loading = false;
+        this.echoLoading = false;
+      },
+    });
+  }
+
+  pingDemo(): void {
+    this.demoLoading = true;
+    this.demoError = null;
+    this.apiService.pingDemo().subscribe({
+      next: (res) => {
+        this.demoResponse = res;
+        this.demoLoading = false;
+      },
+      error: (err) => {
+        this.demoError = err.message || 'Request failed';
+        this.demoLoading = false;
       },
     });
   }

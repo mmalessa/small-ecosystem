@@ -26,7 +26,9 @@ flowchart LR
     subgraph API["API Gateway"]
         KD[KrakenD :8080]
         ECHO[Echo Service\nnginx stub]
+        DEMO[Demo Service\ngo-dummy-http]
         KD -- "X-User-* headers" --> ECHO
+        KD -- "X-User-* headers" --> DEMO
         KD -- "JWKS validation" --> KC
     end
 
@@ -48,6 +50,7 @@ flowchart LR
         FE[Angular SPA :4200]
         FE -- "POST /token" --> KC
         FE -- "GET /api/echo + Bearer" --> KD
+        FE -- "GET /api/demo + Bearer" --> KD
     end
 
     TR -- frontend.localhost --> FE
@@ -76,6 +79,8 @@ Debezium emits events on `keycloak.public.user_entity` topic. Each message conta
 | Traefik          | http://localhost (reverse proxy)    |                            |           |
 | Frontend         | http://frontend.localhost            |                            |           |
 | KrakenD          | http://api.localhost                |                            |           |
+| Echo Service     | (internal) via KrakenD `/api/echo`  |                            |           |
+| Demo Service     | (internal) via KrakenD `/api/demo`  |                            |           |
 | Keycloak         | http://keycloak.localhost           | admin / admin              |           |
 | Adminer          | http://adminer.localhost            |                            |           |
 | Redpanda Console | http://console.localhost            |                            |           |

@@ -4,11 +4,13 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private echoUrl = '/api/echo';
-
   constructor(private http: HttpClient) {}
 
   pingEcho(): Observable<any> {
-    return this.http.get(this.echoUrl);
+    return this.http.get('/api/echo');
+  }
+
+  pingDemo(): Observable<string> {
+    return this.http.get('/api/demo', { responseType: 'text' });
   }
 }

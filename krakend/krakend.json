@@ -39,6 +39,35 @@
           "host": ["http://echo-service:8080"]
         }
       ]
+    },
+    {
+      "endpoint": "/api/demo",
+      "method": "GET",
+      "input_headers": ["Authorization", "X-User-Id", "X-User-Name", "X-User-FirstName", "X-User-LastName", "X-User-Email", "X-User-Roles", "X-User-Groups"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keycloak:8080/realms/master/protocol/openid-connect/certs",
+          "disable_jwk_security": true,
+          "propagate_claims": [
+            ["sub", "X-User-Id"],
+            ["preferred_username", "X-User-Name"],
+            ["given_name", "X-User-FirstName"],
+            ["family_name", "X-User-LastName"],
+            ["email", "X-User-Email"],
+            ["realm_access.roles", "X-User-Roles"],
+            ["groups", "X-User-Groups"]
+          ]
+        }
+      },
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/",
+          "host": ["http://demo-service:80"],
+          "encoding": "no-op"
+        }
+      ]
     }
   ]
 }
