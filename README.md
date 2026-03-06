@@ -8,6 +8,10 @@ Demo of a small ecosystem
 
 ```mermaid
 flowchart LR
+    subgraph Proxy
+        TR[Traefik :80]
+    end
+
     subgraph Keycloak
         KC[Keycloak :8080]
         PG[(PostgreSQL :5432\nkeycloak DB\nwal_level=logical)]
@@ -22,11 +26,14 @@ flowchart LR
     subgraph Messaging
         RP[Redpanda :9092]
         TOPIC[[topic:\nkeycloak.public.user_entity]]
-        CON[Redpanda Console :8081]
+        CON[Redpanda Console :8080]
         DBZ -- produce --> RP
         RP --> TOPIC
         CON -- browse --> RP
     end
+
+    TR -- keycloak.localhost --> KC
+    TR -- console.localhost --> CON
 ```
 
 ### CDC Event fields
@@ -43,14 +50,15 @@ Debezium emits events on `keycloak.public.user_entity` topic. Each message conta
 
 ## Services
 
-| Service          | URL / port        |
-|------------------|-------------------|
-| Keycloak         | http://localhost:8080 |
-| Redpanda Console | http://localhost:8081 |
-| Redpanda (Kafka) | localhost:9092    |
-| PostgreSQL       | localhost:5432    |
+| Service          | URL / port                          | Credentials   |
+|------------------|-------------------------------------|---------------|
+| Traefik          | http://localhost (reverse proxy)    |               |
+| Keycloak         | http://keycloak.localhost           | admin / admin |
+| Redpanda Console | http://console.localhost            |               |
+| Redpanda (Kafka) | localhost:9092                      |               |
+| PostgreSQL       | localhost:5432                      |               |
 
-Keycloak credentials: admin/admin
+Traefik routes HTTP traffic on port 80 based on subdomains. Keycloak and Redpanda Console are not exposed on separate ports — access them through Traefik.
 ## Usage
 
 ```bash

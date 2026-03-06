@@ -1,5 +1,17 @@
 services:
 
+  traefik:
+    image: traefik:v3.3
+    container_name: traefik
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:v24.1.2
     container_name: redpanda
@@ -36,8 +48,11 @@ services:
     container_name: redpanda-console
     depends_on:
       - redpanda
-    ports:
-      - "8081:8080"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.console.rule=Host(`console.localhost`)
+      - traefik.http.routers.console.entrypoints=web
+      - traefik.http.services.console.loadbalancer.server.port=8080
     environment:
       CONFIG_FILEPATH: /tmp/config.yml
     volumes:
@@ -74,8 +89,11 @@ services:
     depends_on:
       - postgres
     command: start-dev
-    ports:
-      - "8080:8080"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.keycloak.rule=Host(`keycloak.localhost`)
+      - traefik.http.routers.keycloak.entrypoints=web
+      - traefik.http.services.keycloak.loadbalancer.server.port=8080
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: postgres
