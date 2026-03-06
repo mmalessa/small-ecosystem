@@ -4,11 +4,19 @@
   "name": "Small Ecosystem API Gateway",
   "port": 8080,
   "timeout": "3s",
+  "extra_config": {
+    "security/cors": {
+      "allow_origins": ["http://frontend.localhost"],
+      "allow_headers": ["Authorization", "Content-Type"],
+      "allow_methods": ["GET", "POST", "OPTIONS"],
+      "expose_headers": ["Content-Length"]
+    }
+  },
   "endpoints": [
     {
       "endpoint": "/api/echo",
       "method": "GET",
-      "input_headers": ["Authorization", "X-User-Id", "X-User-Name", "X-User-Email", "X-User-Roles"],
+      "input_headers": ["Authorization", "X-User-Id", "X-User-Name", "X-User-FirstName", "X-User-LastName", "X-User-Email", "X-User-Roles", "X-User-Groups"],
       "extra_config": {
         "auth/validator": {
           "alg": "RS256",
@@ -17,8 +25,11 @@
           "propagate_claims": [
             ["sub", "X-User-Id"],
             ["preferred_username", "X-User-Name"],
+            ["given_name", "X-User-FirstName"],
+            ["family_name", "X-User-LastName"],
             ["email", "X-User-Email"],
-            ["realm_access.roles", "X-User-Roles"]
+            ["realm_access.roles", "X-User-Roles"],
+            ["groups", "X-User-Groups"]
           ]
         }
       },

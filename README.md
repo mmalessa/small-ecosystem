@@ -44,6 +44,13 @@ flowchart LR
         CON -- browse --> RP
     end
 
+    subgraph Frontend
+        FE[Angular SPA :4200]
+        FE -- "POST /token" --> KC
+        FE -- "GET /api/echo + Bearer" --> KD
+    end
+
+    TR -- frontend.localhost --> FE
     TR -- keycloak.localhost --> KC
     TR -- console.localhost --> CON
     TR -- adminer.localhost --> ADM
@@ -67,6 +74,7 @@ Debezium emits events on `keycloak.public.user_entity` topic. Each message conta
 | Service          | URL / port                          | Credentials                | Database  |
 |------------------|-------------------------------------|----------------------------|-----------|
 | Traefik          | http://localhost (reverse proxy)    |                            |           |
+| Frontend         | http://frontend.localhost            |                            |           |
 | KrakenD          | http://api.localhost                |                            |           |
 | Keycloak         | http://keycloak.localhost           | admin / admin              |           |
 | Adminer          | http://adminer.localhost            |                            |           |

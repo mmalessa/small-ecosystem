@@ -1,0 +1,10 @@
+{
+  "/realms": {
+    "target": "http://keycloak:8080",
+    "changeOrigin": true
+  },
+  "/api": {
+    "target": "http://krakend:8080",
+    "changeOrigin": true
+  }
+}

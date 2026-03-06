@@ -149,6 +149,19 @@ services:
     volumes:
       - ./krakend/krakend.json:/etc/krakend/krakend.json:ro
 
+  frontend:
+    image: node:22-alpine
+    container_name: frontend
+    working_dir: /app
+    command: npx ng serve --host 0.0.0.0 --port 4200
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=Host(`frontend.localhost`)
+      - traefik.http.routers.frontend.entrypoints=web
+      - traefik.http.services.frontend.loadbalancer.server.port=4200
+    volumes:
+      - ./frontend:/app
+
 volumes:
 
   redpanda_data:
