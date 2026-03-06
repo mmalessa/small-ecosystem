@@ -18,6 +18,11 @@ flowchart LR
         KC -- writes --> PG
     end
 
+    subgraph Admin
+        ADM[Adminer :8080]
+        ADM -- manages --> PG
+    end
+
     subgraph CDC["Change Data Capture"]
         DBZ[Debezium Server :2.6\npgoutput plugin\nslot: debezium]
         PG -- replication slot\npublic.user_entity --> DBZ
@@ -34,6 +39,7 @@ flowchart LR
 
     TR -- keycloak.localhost --> KC
     TR -- console.localhost --> CON
+    TR -- adminer.localhost --> ADM
 ```
 
 ### CDC Event fields
@@ -50,13 +56,15 @@ Debezium emits events on `keycloak.public.user_entity` topic. Each message conta
 
 ## Services
 
-| Service          | URL / port                          | Credentials   |
-|------------------|-------------------------------------|---------------|
-| Traefik          | http://localhost (reverse proxy)    |               |
-| Keycloak         | http://keycloak.localhost           | admin / admin |
-| Redpanda Console | http://console.localhost            |               |
-| Redpanda (Kafka) | localhost:9092                      |               |
-| PostgreSQL       | localhost:5432                      |               |
+| Service          | URL / port                          | Credentials                | Database  |
+|------------------|-------------------------------------|----------------------------|-----------|
+| Traefik          | http://localhost (reverse proxy)    |                            |           |
+| Keycloak         | http://keycloak.localhost           | admin / admin              |           |
+| Adminer          | http://adminer.localhost            |                            |           |
+| Redpanda Console | http://console.localhost            |                            |           |
+| Redpanda (Kafka) | localhost:9092                      |                            |           |
+| PostgreSQL       | localhost:5432                      | admin / admin (superuser)  | -         |
+| PostgreSQL       | localhost:5432                      | keycloak / keycloak        | keycloak  |
 
 Traefik routes HTTP traffic on port 80 based on subdomains. Keycloak and Redpanda Console are not exposed on separate ports — access them through Traefik.
 ## Usage
