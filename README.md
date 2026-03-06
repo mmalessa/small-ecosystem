@@ -23,6 +23,13 @@ flowchart LR
         ADM -- manages --> PG
     end
 
+    subgraph API["API Gateway"]
+        KD[KrakenD :8080]
+        ECHO[Echo Service\nnginx stub]
+        KD -- "X-User-* headers" --> ECHO
+        KD -- "JWKS validation" --> KC
+    end
+
     subgraph CDC["Change Data Capture"]
         DBZ[Debezium Server :2.6\npgoutput plugin\nslot: debezium]
         PG -- replication slot\npublic.user_entity --> DBZ
@@ -40,6 +47,7 @@ flowchart LR
     TR -- keycloak.localhost --> KC
     TR -- console.localhost --> CON
     TR -- adminer.localhost --> ADM
+    TR -- api.localhost --> KD
 ```
 
 ### CDC Event fields
@@ -59,6 +67,7 @@ Debezium emits events on `keycloak.public.user_entity` topic. Each message conta
 | Service          | URL / port                          | Credentials                | Database  |
 |------------------|-------------------------------------|----------------------------|-----------|
 | Traefik          | http://localhost (reverse proxy)    |                            |           |
+| KrakenD          | http://api.localhost                |                            |           |
 | Keycloak         | http://keycloak.localhost           | admin / admin              |           |
 | Adminer          | http://adminer.localhost            |                            |           |
 | Redpanda Console | http://console.localhost            |                            |           |
